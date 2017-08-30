@@ -1,0 +1,10 @@
+imports:
+    - { resource: config.yml }
+
+#monolog:
+#    handlers:
+#        drupal:
+#            type: service
+#            id: drupal.monolog_handler
+#            level: ERROR
+#            include_stacktraces: true

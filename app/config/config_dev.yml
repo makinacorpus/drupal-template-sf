@@ -1,0 +1,21 @@
+imports:
+    - { resource: config.yml }
+
+#monolog:
+#    handlers:
+#        drupal:
+#            type: service
+#            id: drupal.monolog_handler
+#            level:  DEBUG
+#            include_stacktraces: true
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    # Uncomment this line and comment the next to enable the profiler
+    #profiler: { only_exceptions: false }
+    profiler: { enabled: false }
+
+#web_profiler:
+#    toolbar: true
+#    intercept_redirects: false

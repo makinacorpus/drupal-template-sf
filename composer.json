@@ -1,0 +1,110 @@
+{
+    "name": "makinacorpus/drupal-template-sf",
+    "description": "Composer template for Drupal 7 and Symfony bind together with drupal-sf-dic",
+    "type": "project",
+    "license": "GPL-2",
+    "authors": [
+        {
+            "name": "Simon MELLERIN",
+            "email": "simon.mellerin@makina-corpus.com"
+        },
+        {
+            "name": "Makina Corpus",
+            "homepage": "http://makina-corpus.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": {
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/7"
+        }
+    },
+    "require": {
+        "composer/installers": "~1.0",
+        "cweagans/composer-patches": "~1.0",
+        "doctrine/annotations": "<1.5",
+        "doctrine/cache": "<1.7",
+        "doctrine/collections": "<1.5",
+        "doctrine/common": "<2.8",
+        "doctrine/dbal": "^2.5 <2.6",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-fixtures-bundle": "^2.3",
+        "doctrine/instantiator": "<1.1",
+        "doctrine/orm": "^2.5 <2.7",
+        "drupal-composer/preserve-paths": "0.1.*",
+        "drupal/composer_autoloader": "1.*",
+        "drupal/drupal": "7.*",
+        "drush/drush": "~8.0",
+        "ext-curl": "*",
+        "ext-gd": "*",
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*",
+        "ext-xml": "*",
+        "makinacorpus/drupal-badm": "^1.1",
+        "monolog/monolog": "^1.17",
+        "oyejorge/less.php": "v1.7.0.10",
+        "php": ">=5.2.5",
+        "symfony/monolog-bundle": "^2.11",
+        "symfony/symfony": "^3.3",
+        "twig/extensions": "~1.3",
+        "twig/twig": "~1.20|~2.0",
+        "webflo/drupal-finder": "^1.0.0"
+    },
+    "conflict": {
+        "drupal/core": "8.*"
+    },
+    "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ],
+        "files": [
+            "app/AppKernel.php"
+        ]
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "DrupalTemplateSymfony\\composer\\ScriptHandler::postCreateProject",
+            "composer require \"makinacorpus/drupal-sf-dic\":\"dev-master as 3.3\"",
+            "composer require \"makinacorpus/drupal-usync\":\"^1.0.13\""
+        ]
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "extra": {
+        "installer-paths": {
+            "web/": [
+                "type:drupal-core"
+            ],
+            "web/sites/all/modules/composer/{$name}/": [
+                "type:drupal-module"
+            ],
+            "web/sites/all/themes/composer/{$name}/": [
+                "type:drupal-theme"
+            ],
+            "web/sites/all/libraries/{$name}/": [
+                "type:drupal-library"
+            ],
+            "web/profiles/{$name}/": [
+                "type:drupal-profile"
+            ]
+        },
+        "preserve-paths": [
+            "web/sites/all/modules/contrib",
+            "web/sites/all/themes/contrib",
+            "web/sites/all/libraries",
+            "web/sites/all/drush",
+            "web/sites/default/settings.php",
+            "web/sites/default/files"
+        ],
+        "patches": {
+            "drupal/drupal" : {
+                "Do not copy over the owner and engine of a theme if the child theme uses a different engine than the base theme" : "patches/1545964-155-theme_engine_inheritance.patch"
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "package": {
+        "name": "drupal-template-sf",
+        "version": "1.0.0",
+        "source": {
+          "url": "git@github.com:makinacorpus/drupal-template-sf.git",
+          "type": "git",
+          "reference": "master"
+        }
+    }
+}
