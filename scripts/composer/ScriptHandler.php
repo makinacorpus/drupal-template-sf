@@ -27,13 +27,19 @@ class ScriptHandler {
     $drupalRoot = $drupalFinder->getDrupalRoot();
     $composerRoot = $drupalFinder->getComposerRoot();
 
-    $event->getIO()->write(" ");
-    $event->getIO()->write("----------------------------------");
-    $event->getIO()->write(" Makina Corpus                    ");
-    $event->getIO()->write("----------------------------------");
-    $event->getIO()->write(" Drupal-Template-Sf Configuration ");
-    $event->getIO()->write("----------------------------------");
-    $event->getIO()->write(" ");
+    $event->getIO()->write("                                   ");
+    $event->getIO()->write("-----------------------------------");
+    $event->getIO()->write("                                   ");
+    $event->getIO()->write("           Makina Corpus           ");
+    $event->getIO()->write("        drupal-template-sf         ");
+    $event->getIO()->write("                                   ");
+    $event->getIO()->write("-----------------------------------");
+    $event->getIO()->write("                                   ");
+    $event->getIO()->write("    A composer template binding    ");
+    $event->getIO()->write("         Drupal 7 & Symfony        ");
+    $event->getIO()->write("                                   ");
+    $event->getIO()->write("-----------------------------------");
+    $event->getIO()->write("                                   ");
 
     // Choose Drupal repository name
     $drupalRoot = ScriptHandler::configDrupalDir($event, $drupalRoot, $composerRoot);
@@ -252,31 +258,38 @@ EOT;
 
     file_put_contents($profilePath . "/" . $profileName . ".info", $infoContent);
 
-    // .profile file
-    $profileContent = '<?php';
-
-    file_put_contents($profilePath . "/" . $profileName . ".profile", $profileContent);
+    // List of themes required in hook_install
+    $themes = "['bootbase'";
 
     // Ask for new frontend theme, if wanted : create & configure it
+    $setDefaultTheme = "";
     if ($event->getIO()->askConfirmation("\nDo you want to create a frontend theme [Y,n] ?")) {
       $frontThemes = ScriptHandler::createTheme($event, $profileName, $profilePath . "/themes");
+
+      // Add frontend theme to required themes
+      foreach ($frontThemes as $theme) {
+        $themes .= ", '" . $theme . "'";
+      }
+
+      $setDefaultTheme = "variable_set('theme_default', '" . $frontThemes['theme'] . "');";
+
     }
 
     // Ask for new backend theme, if wanted : create & configure it
+    $setAdminTheme = "";
     if ($event->getIO()->askConfirmation("\nDo you want to create a backend theme [Y,n] ?")) {
       $backThemes = ScriptHandler::createTheme($event, $profileName, $profilePath . "/themes", true);
+
+      // Add backend theme to required themes
+      foreach ($backThemes as $theme) {
+        $themes .= ", '" . $theme . "'";
+      }
+
+      $setAdminTheme = "variable_set('admin_theme', '" . $backThemes['theme'] . "');";
     }
 
-    // Construct list of themes required
-    $themes = "['bootbase'";
-    foreach ($frontThemes as $theme) {
-      $themes .= ", '" . $theme . "'";
-    }
-
-    foreach ($backThemes as $theme) {
-      $themes .= ", '" . $theme . "'";
-    }
     $themes .= "]";
+
     // .module file
     $installContent = <<<EOT
 <?php
@@ -292,12 +305,44 @@ EOT;
 /**
  * Implements hook_install().
  */
-function {$profileName}_install() {
-  theme_enable($themes);
+function {$profileName}_enable() {
+
 }
 EOT;
 
     file_put_contents($profilePath . "/" . $profileName . ".install", $installContent);
+
+    // .profile file
+    $profileContent = <<<EOT
+<?php
+
+
+/**
+ * Implements hook_install_tasks().
+ */
+function {$profileName}_install_tasks(\$install_state) {
+  \$task['setTheme'] = [
+    'display_name' => st('Setting admin and front theme'),
+    'display' => TRUE,
+    'type' => 'normal',
+    'run' => INSTALL_TASK_RUN_IF_REACHED,
+    'function' => 'setTheme',
+  ];
+  return \$task;
+}
+
+/**
+ * Set profile themes as admin and default theme
+ */
+function setTheme() {
+  theme_enable($themes);
+  $setDefaultTheme
+  $setAdminTheme
+}
+EOT;
+
+    file_put_contents($profilePath . "/" . $profileName . ".profile", $profileContent);
+
 
     return $profileName;
   }
@@ -361,9 +406,9 @@ EOT;
 
     file_put_contents($themePath . "/" . $themeName . ".info", $infoContent);
 
-    $themes =[ $themeName];
+    $themes =[ 'theme' => $themeName];
     if ($isBadmBased) {
-      $themes[]='badm';
+      $themes['base']='badm';
     }
 
     return $themes;

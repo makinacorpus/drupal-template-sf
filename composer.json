@@ -103,7 +103,7 @@
         ],
         "patches": {
             "drupal/drupal" : {
-                "Do not copy over the owner and engine of a theme if the child theme uses a different engine than the base theme" : "patches/1545964-155-theme_engine_inheritance.patch"
+                "Do not copy over the owner and engine of a theme if the child theme uses a different engine than the base theme" : "patches/1545964-164-theme_engine_inheritance.patch"
             }
         }
     }
