@@ -149,24 +149,21 @@ class ScriptHandler {
 
     // Creation of var dir
     if (!file_exists($composerRoot . '/var')) {
-      mkdir($composerRoot . '/var', 755, true);
+      mkdir($composerRoot . '/var', 0755, true);
     }
-    $fs->chown($composerRoot . '/var', 'www-data');
-    $fs->chgrp($composerRoot . '/var', 'www-data');
+    $fs->chown($composerRoot . '/var', get_current_user());
 
     // Creation of log dir
     if (!file_exists($composerRoot . '/var/log')) {
-      mkdir($composerRoot . '/var/log', 755, true);
+      mkdir($composerRoot . '/var/log', 0755, true);
     }
-    $fs->chown($composerRoot . '/var/log', 'www-data');
-    $fs->chgrp($composerRoot . '/var/log', 'www-data');
+    $fs->chown($composerRoot . '/var/log', get_current_user());
 
     // Creation of cache dir
     if (!file_exists($composerRoot . '/cache')) {
-      mkdir($composerRoot . '/var/cache', 755, true);
+      mkdir($composerRoot . '/var/cache', 0755, true);
     }
-    $fs->chown($composerRoot . '/var/cache', 'www-data');
-    $fs->chgrp($composerRoot . '/var/cache', 'www-data');
+    $fs->chown($composerRoot . '/var/cache', get_current_user());
   }
 
   /**
